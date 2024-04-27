@@ -64,6 +64,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 // Inject app Dependencies (Dependency Injection)
+builder.Services.AddScoped<IFollowMusicRepository, FollowMusicRepository>();
 builder.Services.AddScoped<IMusicRepository, MusicRepository>();
 builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();

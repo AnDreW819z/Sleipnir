@@ -6,6 +6,7 @@ namespace Sleipnir.Api.Interfaces
     public interface IMusicRepository
     {
         public Task<Music> AddNewMusic(CreateMusicDto dto);
+        public Task<Music> GetById(long id);
         public Task<Music> DeleteMusic(long id);
     }
 }

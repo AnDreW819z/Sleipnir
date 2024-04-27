@@ -85,6 +85,17 @@ namespace Sleipnir.Api.Repository
             return default;
         }
 
+        public async Task<Music> GetById(long id)
+        {
+            var music = await _context.Musics.FindAsync(id);
+            if(music != null)
+            {
+                music.Artists = await _context.MusicArtists.Where(m => m.MusicId == id).Include(a => a.Artist).ToListAsync();
+                return music;
+            }
+            return default;
+        }
+
         public Task<Music> DeleteMusic(long id)
         {
             throw new NotImplementedException();

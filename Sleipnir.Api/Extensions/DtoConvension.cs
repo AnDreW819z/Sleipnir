@@ -1,5 +1,6 @@
 ﻿using Sleipnir.Api.Models;
 using Sleipnir.Dtos.Artist;
+using Sleipnir.Dtos.FollowMusic;
 using Sleipnir.Dtos.Genre;
 using Sleipnir.Dtos.Music;
 
@@ -163,6 +164,22 @@ namespace Sleipnir.Api.Extensions
                         }).ToList();
             }
             return null;
+        }
+
+        /////////////// FollowMusic //////////////////
+        public static List<FollowMusicDto> ConvertToDtos(this List<FollowMusic> follows,
+                                                           List<Music> musics)
+        {
+            return (from follow in follows
+                    join music in musics
+                    on follow.MusicId equals music.Id
+                    select new FollowMusicDto
+                    {
+                        MusicId = follow.MusicId,
+                        MusicName= music.Name,
+                        Adress= music.Adress,
+                        Artists = music.Artists.ConvertToDto()
+                    }).ToList();
         }
     }
 }
