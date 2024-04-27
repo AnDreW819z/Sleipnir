@@ -1,0 +1,40 @@
+version: '3.4'
+
+networks:
+  dev:
+    driver: bridge
+services:
+  sleipnir_api:
+    image: sleipnir_api
+    depends_on:
+      - "sleipnir_db"
+    container_name: sleipnir_api
+    ports:
+      - 7189:80
+    expose:
+      - 80
+    build:
+      context: .
+      dockerfile: Sleipnir.Api/Dockerfile
+    environment:
+      - ConnectionStrings__defaultConnection=Username=postgres;Password=1e2rf3s6wsd6f;Host=sleipnir_db;Port=5432;Database=SleipnirDb;
+    networks:
+      - dev
+
+  sleipnir_db:
+    image: postgres:16.2
+    container_name: sleipnir_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1e2rf3s6wsd6f
+      - POSTGRES_DB:SleipnirDb
+    ports:
+      - "5332:5432"
+    restart: always
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    networks:
+      - dev
+      
+volumes:
+  db_volume:
