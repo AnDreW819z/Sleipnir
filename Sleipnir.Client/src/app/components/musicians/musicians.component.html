@@ -1,0 +1,13 @@
+<div class="main" >
+    <div class="container">
+      <div class="main-card">
+        <div class="pattern">
+          <div class="pattern-element" *ngFor="let item of navItems"
+          (click)="musicianPage(item.id)">
+            <img class="element-img" src="{{item.imageUrl}}" alt="">
+              <p class="element-title">{{item.name}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

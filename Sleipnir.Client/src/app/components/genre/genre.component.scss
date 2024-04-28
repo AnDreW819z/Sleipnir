@@ -1,0 +1,66 @@
+.main {
+   display: flex;
+   background: #f7f6ff;
+   justify-content: center;
+   height: 100%;
+
+   .container {
+      width: 1240px;
+      box-sizing: border-box;
+      justify-content: center;
+
+
+
+
+      .main-card {
+         box-sizing: border-box;
+         margin-top: 67px;
+
+         .pattern {
+            box-sizing: border-box;
+            display: grid;
+            grid-gap: 18px;
+            grid-template-columns: repeat(auto-fill, minmax(281px, 1fr));
+
+            .pattern-element {
+               cursor: pointer;
+               border: none;
+               border-radius: 12px;
+               background-color: #4368c9;
+               height: 281px;
+               width: 281px;
+               position: relative;
+               overflow: hidden;
+               display: flex;
+               justify-content: center;
+
+
+               .element-img {
+                  min-width: 100%;
+                  min-height: 100%;
+                  flex-shrink: 0;
+               }
+
+
+               .element-title {
+
+                  position: absolute;
+                  bottom: 0;
+                  font: 700 32px Monda, sans-serif;
+                  color: rgba(255, 255, 255, 1);
+                  transition: top .5s ease;
+                  z-index: 1;
+               }
+
+            }
+
+            .pattern-element:hover .element-title {
+               transition: transform 300ms;
+               transform: translateY(-10px);
+            }
+
+         }
+      }
+   }
+
+}
