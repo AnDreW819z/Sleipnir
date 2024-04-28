@@ -3,6 +3,7 @@ using Sleipnir.Dtos.Artist;
 using Sleipnir.Dtos.FollowMusic;
 using Sleipnir.Dtos.Genre;
 using Sleipnir.Dtos.Music;
+using Sleipnir.Dtos.Playlist;
 
 namespace Sleipnir.Api.Extensions
 {
@@ -179,6 +180,18 @@ namespace Sleipnir.Api.Extensions
                         MusicName= music.Name,
                         Adress= music.Adress,
                         Artists = music.Artists.ConvertToDto()
+                    }).ToList();
+        }
+
+        /////////////// Playlists //////////////////
+        public static List<PlaylistsDto> ConvertToDtos(this List<Playlist> playlists)
+        {
+            return (from playlist in playlists
+                    select new PlaylistsDto
+                    {
+                        Id= playlist.Id,
+                        Name= playlist.Name,
+                        ImageUrl = playlist.ImageUrl
                     }).ToList();
         }
     }

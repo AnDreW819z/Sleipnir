@@ -220,6 +220,31 @@ namespace Sleipnir.Api.Migrations
                     b.ToTable("Genres");
                 });
 
+            modelBuilder.Entity("Sleipnir.Api.Models.InvitedPerson", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("CanChange")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long?>("PlaylistId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlaylistId");
+
+                    b.ToTable("InvitedPersons");
+                });
+
             modelBuilder.Entity("Sleipnir.Api.Models.Music", b =>
                 {
                     b.Property<long>("Id")
@@ -288,6 +313,81 @@ namespace Sleipnir.Api.Migrations
                     b.HasIndex("MusicId");
 
                     b.ToTable("MusicGenres");
+                });
+
+            modelBuilder.Entity("Sleipnir.Api.Models.Playlist", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsPublicPlaylist")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Playlists");
+                });
+
+            modelBuilder.Entity("Sleipnir.Api.Models.PlaylistMusic", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("MusicId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("PlaylistId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MusicId");
+
+                    b.HasIndex("PlaylistId");
+
+                    b.ToTable("PlaylistsMusic");
+                });
+
+            modelBuilder.Entity("Sleipnir.Api.Models.PlaylistRating", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("PlaylistId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<double>("UserRating")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlaylistId");
+
+                    b.ToTable("PlaylistsRating");
                 });
 
             modelBuilder.Entity("Sleipnir.Api.Models.TokenInfo", b =>
@@ -432,6 +532,13 @@ namespace Sleipnir.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Sleipnir.Api.Models.InvitedPerson", b =>
+                {
+                    b.HasOne("Sleipnir.Api.Models.Playlist", null)
+                        .WithMany("InvitedPersons")
+                        .HasForeignKey("PlaylistId");
+                });
+
             modelBuilder.Entity("Sleipnir.Api.Models.MusicArtist", b =>
                 {
                     b.HasOne("Sleipnir.Api.Models.Artist", "Artist")
@@ -470,6 +577,36 @@ namespace Sleipnir.Api.Migrations
                     b.Navigation("Music");
                 });
 
+            modelBuilder.Entity("Sleipnir.Api.Models.PlaylistMusic", b =>
+                {
+                    b.HasOne("Sleipnir.Api.Models.Music", "Music")
+                        .WithMany()
+                        .HasForeignKey("MusicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Sleipnir.Api.Models.Playlist", "Plalist")
+                        .WithMany("Music")
+                        .HasForeignKey("PlaylistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Music");
+
+                    b.Navigation("Plalist");
+                });
+
+            modelBuilder.Entity("Sleipnir.Api.Models.PlaylistRating", b =>
+                {
+                    b.HasOne("Sleipnir.Api.Models.Playlist", "Playlist")
+                        .WithMany()
+                        .HasForeignKey("PlaylistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Playlist");
+                });
+
             modelBuilder.Entity("Sleipnir.Api.Models.Artist", b =>
                 {
                     b.Navigation("Musics");
@@ -485,6 +622,13 @@ namespace Sleipnir.Api.Migrations
                     b.Navigation("Artists");
 
                     b.Navigation("Genres");
+                });
+
+            modelBuilder.Entity("Sleipnir.Api.Models.Playlist", b =>
+                {
+                    b.Navigation("InvitedPersons");
+
+                    b.Navigation("Music");
                 });
 #pragma warning restore 612, 618
         }

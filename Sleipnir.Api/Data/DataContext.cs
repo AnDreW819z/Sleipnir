@@ -22,5 +22,9 @@ namespace Sleipnir.Api.Data
         public DbSet<MusicGenre> MusicGenres { get; set;}
         public DbSet<TokenInfo> TokenInfo { get; set; }
         public DbSet<FollowMusic> FollowMusics { get; set; }
+        public DbSet<Playlist> Playlists { get; set; }
+        public DbSet<PlaylistMusic > PlaylistsMusic { get; set; }
+        public DbSet<PlaylistRating> PlaylistsRating { get; set; }
+        public DbSet<InvitedPerson> InvitedPersons { get;set; }
     }
 }

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Sleipnir.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class NewMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,7 +21,7 @@ namespace Sleipnir.Api.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     ImageUrl = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                    UserId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -47,7 +47,7 @@ namespace Sleipnir.Api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    UserAvatar = table.Column<string>(type: "text", nullable: false),
+                    UserAvatar = table.Column<string>(type: "text", nullable: true),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -66,6 +66,20 @@ namespace Sleipnir.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FollowMusics",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    MusicId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FollowMusics", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -95,6 +109,22 @@ namespace Sleipnir.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Musics", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Playlists",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    OwnerId = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    ImageUrl = table.Column<string>(type: "text", nullable: true),
+                    IsPublicPlaylist = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Playlists", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -270,6 +300,74 @@ namespace Sleipnir.Api.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "InvitedPersons",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    CanChange = table.Column<bool>(type: "boolean", nullable: false),
+                    PlaylistId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InvitedPersons", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InvitedPersons_Playlists_PlaylistId",
+                        column: x => x.PlaylistId,
+                        principalTable: "Playlists",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PlaylistsMusic",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PlaylistId = table.Column<long>(type: "bigint", nullable: false),
+                    MusicId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlaylistsMusic", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PlaylistsMusic_Musics_MusicId",
+                        column: x => x.MusicId,
+                        principalTable: "Musics",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PlaylistsMusic_Playlists_PlaylistId",
+                        column: x => x.PlaylistId,
+                        principalTable: "Playlists",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PlaylistsRating",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    PlaylistId = table.Column<long>(type: "bigint", nullable: false),
+                    UserRating = table.Column<double>(type: "double precision", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlaylistsRating", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PlaylistsRating_Playlists_PlaylistId",
+                        column: x => x.PlaylistId,
+                        principalTable: "Playlists",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -308,6 +406,11 @@ namespace Sleipnir.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_InvitedPersons_PlaylistId",
+                table: "InvitedPersons",
+                column: "PlaylistId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MusicArtists_ArtistId",
                 table: "MusicArtists",
                 column: "ArtistId");
@@ -326,6 +429,21 @@ namespace Sleipnir.Api.Migrations
                 name: "IX_MusicGenres_MusicId",
                 table: "MusicGenres",
                 column: "MusicId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlaylistsMusic_MusicId",
+                table: "PlaylistsMusic",
+                column: "MusicId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlaylistsMusic_PlaylistId",
+                table: "PlaylistsMusic",
+                column: "PlaylistId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlaylistsRating_PlaylistId",
+                table: "PlaylistsRating",
+                column: "PlaylistId");
         }
 
         /// <inheritdoc />
@@ -347,10 +465,22 @@ namespace Sleipnir.Api.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "FollowMusics");
+
+            migrationBuilder.DropTable(
+                name: "InvitedPersons");
+
+            migrationBuilder.DropTable(
                 name: "MusicArtists");
 
             migrationBuilder.DropTable(
                 name: "MusicGenres");
+
+            migrationBuilder.DropTable(
+                name: "PlaylistsMusic");
+
+            migrationBuilder.DropTable(
+                name: "PlaylistsRating");
 
             migrationBuilder.DropTable(
                 name: "TokenInfo");
@@ -369,6 +499,9 @@ namespace Sleipnir.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Musics");
+
+            migrationBuilder.DropTable(
+                name: "Playlists");
         }
     }
 }
